@@ -17,8 +17,8 @@ export class CambioComponent {
 
   authenticateAndGetToken() {
     const credentials = {
-      username: 'mapasco',
-      password: 'mapasco'
+      username: '',
+      password: ''
     };
 
     this.http.post('https://ptesa-env-more.eastus.cloudapp.azure.com/k2o/dev/api/api/Token/Autenticar', credentials)
@@ -48,9 +48,10 @@ export class CambioComponent {
     const headers = new HttpHeaders().set('Authorization', `Bearer ${this.accessToken}`);
 
     this.http.put('https://ptesa-env-more.eastus.cloudapp.azure.com/k2o/dev/api/api/Usuario/CambiarClave', data, { headers })
-      .subscribe(
-        response => {
-          this.message = 'Contraseña cambiada con éxito';
+    .subscribe(
+      (response: any) => {
+        console.log(response); 
+        this.message = 'Contraseña cambiada con éxito';
         },
         error => {
           this.message = 'Error al cambiar la contraseña';
