@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 @Component({
   selector: 'app-cambio',
@@ -10,30 +11,51 @@ export class CambioComponent {
   newPassword: string = '';
   confirmPassword: string = '';
   message: string = '';
+  accessToken: string = ''; 
 
-  changePassword() {
-    const data = {
-      currentPassword: this.currentPassword,
-      newPassword: this.newPassword
+  constructor(private http: HttpClient) {}
+
+  authenticateAndGetToken() {
+    const credentials = {
+      username: 'mapasco',
+      password: 'mapasco'
     };
 
-    fetch('http://localhost:3000/api/cambiar-contrasena', {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(data)
-    })
-    .then(response => response.json())
-    .then(result => {
-      if (result.success) {
-        this.message = result.message;
-      } else {
-        this.message = 'Error: ' + result.message;
-      }
-    })
-    .catch(error => {
-      this.message = 'Error: ' + error.message;
-    });
+    this.http.post('https://ptesa-env-more.eastus.cloudapp.azure.com/k2o/dev/api/api/Token/Autenticar', credentials)
+      .subscribe(
+        (response: any) => {
+          this.accessToken = response.access_token;
+          this.message = 'Autenticación exitosa';
+        },
+        error => {
+          this.message = 'Error en la autenticación';
+          console.error('Error:', error);
+        }
+      );
+  }
+
+  changePassword() {
+    if (this.newPassword !== this.confirmPassword) {
+      this.message = 'La nueva contraseña y la confirmación no coinciden.';
+      return;
+    }
+    this.authenticateAndGetToken();
+
+    const data = {
+      ContraseñaActual: this.currentPassword,
+      NuevaContraseña: this.newPassword
+    };
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${this.accessToken}`);
+
+    this.http.put('https://ptesa-env-more.eastus.cloudapp.azure.com/k2o/dev/api/api/Usuario/CambiarClave', data, { headers })
+      .subscribe(
+        response => {
+          this.message = 'Contraseña cambiada con éxito';
+        },
+        error => {
+          this.message = 'Error al cambiar la contraseña';
+          console.error('Error:', error);
+        }
+      );
   }
 }
