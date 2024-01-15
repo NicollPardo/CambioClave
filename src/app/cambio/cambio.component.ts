@@ -1,4 +1,3 @@
-// cambio.component.ts
 import { Component } from '@angular/core';
 import { CambioService } from '../services/cambio.service';
 
