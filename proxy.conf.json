@@ -1,0 +1,7 @@
+{
+    "/api": {
+      "target": "https://ptesa-env-more.eastus.cloudapp.azure.com",
+      "secure": false
+    }
+  }
+  

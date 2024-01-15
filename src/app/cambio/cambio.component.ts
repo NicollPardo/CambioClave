@@ -17,35 +17,45 @@ export class CambioComponent {
 
   authenticateAndGetToken() {
     const credentials = {
-      username: '',
-      password: ''
+      cuenta: 'mapasco',
+      clave: 'mapasco1'
     };
 
     this.http.post('https://ptesa-env-more.eastus.cloudapp.azure.com/k2o/dev/api/api/Token/Autenticar', credentials)
       .subscribe(
         (response: any) => {
-          this.accessToken = response.access_token;
+          this.accessToken = response.dato.accessToken;
+          setTimeout(()=>{
+            this.changePassword(this.accessToken)
+          },5000)
+          
           this.message = 'Autenticación exitosa';
         },
         error => {
           this.message = 'Error en la autenticación';
           console.error('Error:', error);
         }
+
       );
+
+
   }
 
-  changePassword() {
+  changePassword(token:string) {
+
+    console.log(`mi token: ${token}`)
+
     if (this.newPassword !== this.confirmPassword) {
       this.message = 'La nueva contraseña y la confirmación no coinciden.';
       return;
     }
-    this.authenticateAndGetToken();
-
+  
     const data = {
-      ContraseñaActual: this.currentPassword,
-      NuevaContraseña: this.newPassword
-    };
-    const headers = new HttpHeaders().set('Authorization', `Bearer ${this.accessToken}`);
+      claveAnterior: this.currentPassword,
+      claveNueva: this.newPassword,
+      claveNuevaConfirmada: this.confirmPassword
+    }
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
 
     this.http.put('https://ptesa-env-more.eastus.cloudapp.azure.com/k2o/dev/api/api/Usuario/CambiarClave', data, { headers })
     .subscribe(

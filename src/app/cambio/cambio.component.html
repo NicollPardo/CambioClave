@@ -1,12 +1,12 @@
-    <form (submit)="changePassword()">
+    <form (submit)="authenticateAndGetToken()">
     <label for="currentPassword">Contraseña Actual:</label>
-    <input type="password" id="currentPassword" name="currentPassword" [(ngModel)]="currentPassword" required>
+    <input type="text" id="currentPassword" name="currentPassword" [(ngModel)]="currentPassword" required>
   
     <label for="newPassword">Nueva Contraseña:</label>
-    <input type="password" id="newPassword" name="newPassword" [(ngModel)]="newPassword" required>
+    <input type="text" id="newPassword" name="newPassword" [(ngModel)]="newPassword" required>
   
     <label for="confirmPassword">Confirmar Nueva Contraseña:</label>
-    <input type="password" id="confirmPassword" name="confirmPassword" [(ngModel)]="confirmPassword" required>
+    <input type="text" id="confirmPassword" name="confirmPassword" [(ngModel)]="confirmPassword" required>
   
     <button type="submit">Cambiar Contraseña</button>
   </form>
