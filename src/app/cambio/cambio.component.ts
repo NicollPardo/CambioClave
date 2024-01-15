@@ -1,10 +1,12 @@
+// cambio.component.ts
 import { Component } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { CambioService } from '../services/cambio.service';
 
 @Component({
   selector: 'app-cambio',
   templateUrl: './cambio.component.html',
-  styleUrls: ['./cambio.component.css']
+  styleUrls: ['./cambio.component.css'],
+  providers: [CambioService]
 })
 export class CambioComponent {
   currentPassword: string = '';
@@ -13,7 +15,7 @@ export class CambioComponent {
   message: string = '';
   accessToken: string = ''; 
 
-  constructor(private http: HttpClient) {}
+  constructor(private cambioService: CambioService) {}
 
   authenticateAndGetToken() {
     const credentials = {
@@ -21,13 +23,13 @@ export class CambioComponent {
       clave: 'mapasco1'
     };
 
-    this.http.post('https://ptesa-env-more.eastus.cloudapp.azure.com/k2o/dev/api/api/Token/Autenticar', credentials)
+    this.cambioService.authenticate(credentials)
       .subscribe(
         (response: any) => {
           this.accessToken = response.dato.accessToken;
-          setTimeout(()=>{
-            this.changePassword(this.accessToken)
-          },5000)
+          setTimeout(() => {
+            this.changePassword(this.accessToken);
+          }, 5000);
           
           this.message = 'Autenticación exitosa';
         },
@@ -35,15 +37,11 @@ export class CambioComponent {
           this.message = 'Error en la autenticación';
           console.error('Error:', error);
         }
-
       );
-
-
   }
 
-  changePassword(token:string) {
-
-    console.log(`mi token: ${token}`)
+  changePassword(token: string) {
+    console.log(`mi token: ${token}`);
 
     if (this.newPassword !== this.confirmPassword) {
       this.message = 'La nueva contraseña y la confirmación no coinciden.';
@@ -55,13 +53,12 @@ export class CambioComponent {
       claveNueva: this.newPassword,
       claveNuevaConfirmada: this.confirmPassword
     }
-    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
 
-    this.http.put('https://ptesa-env-more.eastus.cloudapp.azure.com/k2o/dev/api/api/Usuario/CambiarClave', data, { headers })
-    .subscribe(
-      (response: any) => {
-        console.log(response); 
-        this.message = 'Contraseña cambiada con éxito';
+    this.cambioService.changePassword(data, token)
+      .subscribe(
+        (response: any) => {
+          console.log(response); 
+          this.message = 'Contraseña cambiada con éxito';
         },
         error => {
           this.message = 'Error al cambiar la contraseña';

@@ -5,7 +5,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { CambioComponent } from './cambio/cambio.component';
 import { HttpClientModule } from '@angular/common/http';
-
+import { CambioService } from './services/cambio.service';
 @NgModule({
   declarations: [
     AppComponent,
@@ -17,7 +17,9 @@ import { HttpClientModule } from '@angular/common/http';
     FormsModule,
     HttpClientModule,
   ],
-  providers: [],
+  providers: [
+    CambioService
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
